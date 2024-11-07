@@ -1,0 +1,15 @@
+region                = "us-east-1"
+s3_bucket_name        = "terraform-state-bucket-juan"
+dynamodb_table_name   = "terraform-locks"
+vpc_cidr              = "10.0.0.0/16"
+public_subnet_cidr    = "10.0.1.0/24"
+private_subnet_cidr   = "10.0.3.0/24"
+environment           = "dev"
+customer              = "CLARIN"
+project               = "CLARINWALLET"
+from_port = 0
+to_port   = 0
+protocol  = "-1"
+sso_profile = "academy-box-1"
+cidr_block = "0.0.0.0/0"
+public_subnet_b_cidr = "10.0.2.0/24"

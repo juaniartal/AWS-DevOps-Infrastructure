@@ -1,0 +1,6 @@
+apiVersion: v2
+name: base-line-deployment
+type: application
+description: base-line-deployment helm chart for kubernetes
+version: 0.0.24
+appVersion: 0.0.24

@@ -1,0 +1,37 @@
+{{- if .Values.gateway }}
+---
+{{- if has "networking.istio.io/v1" .Capabilities.APIVersions }}
+apiVersion: networking.istio.io/v1
+{{- else }}
+apiVersion: networking.istio.io/v1beta1
+{{- end }}
+kind: Gateway
+metadata:
+  name: {{  .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/version: {{ $.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ $.Chart.Version  }}
+spec:
+  selector:
+    istio: {{ .Values.gateway.istio }}
+  servers:
+  - hosts:
+    - {{ .Values.gateway.hosts }}
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+    tls:
+      httpsRedirect: true
+  - hosts:
+    - {{ .Values.gateway.hosts }}
+    port:
+      name: https
+      number: 443
+      protocol: HTTP
+  {{- end }}

@@ -1,0 +1,34 @@
+{{- if .Values.virtualservice }}
+---
+{{- if has "networking.istio.io/v1" .Capabilities.APIVersions }}
+apiVersion: networking.istio.io/v1
+{{- else }}
+apiVersion: networking.istio.io/v1beta1
+{{- end }}
+kind: VirtualService
+metadata:
+  name: {{  .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: {{ .Release.Name }}
+    app.kubernetes.io/part-of: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/version: {{ $.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ $.Chart.Version  }}
+spec:
+  gateways:
+  - {{ .Release.Name }}
+  hosts:
+  - {{ .Values.virtualservice.hosts }}
+  http:
+  - match:
+    - uri:
+        prefix: {{ .Values.virtualservice.prefix | default "/" }}
+    route:
+    - destination:
+        host: {{ .Release.Name }}
+        port:
+          number: {{ .Values.virtualservice.port | default 3000 }}
+  {{- end }}

@@ -1,0 +1,19 @@
+{{- if .Values.configmap }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{  .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/part-of: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/version: {{ $.Chart.AppVersion | quote }}
+    helm.sh/chart: {{ $.Chart.Version  }}
+{{- with .Values.configmap }}
+data: 
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}

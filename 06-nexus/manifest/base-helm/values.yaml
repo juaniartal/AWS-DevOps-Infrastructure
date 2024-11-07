@@ -1,0 +1,96 @@
+#
+podDisruptionBudget: 1
+#
+replicaCount: 1
+#
+image:
+  repository: "pepe"
+  tag: latest
+#
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+#
+resources:
+  requests:
+    cpu: 2
+    memory: 2Gi
+  limits:
+    cpu: 4 
+    memory: 4Gi
+#
+virtualservice:
+  port: 1337
+  hosts: moon.com
+  prefix: "/"
+#
+gateway:
+  hosts: moon.com
+  istio: istio-ingressgateway
+#
+serviceAccount:
+  awsRoleArn: "arn:aws:iam::1234567890:role/eks-testing"
+#
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: arch
+          operator: In
+          values:
+              - arm64
+#
+tolerations:
+- key: "arch"
+  operator: "Equal"
+  value: "arm64"
+  effect: "NoSchedule"
+#
+roleRules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+  - apiGroups: ["secrets-store.csi.x-k8s.io"]
+    resources: ["secretproviderclasses"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+#
+volumes:
+- name: httpd
+  persistentVolumeClaim:
+    claimName: httpd
+- name: secrets-store-inline
+  csi:
+    driver: secrets-store.csi.k8s.io
+    readOnly: true
+    volumeAttributes:
+      secretProviderClass: httpd
+#
+volumeMounts:
+- mountPath: /opt/app/public/uploads
+  name: httpd
+- mountPath: /mnt/secrets-store
+  name: secrets-store-inline
+  readOnly: true
+#
+pvc:
+  storageClass: gp3
+  size: 100Gi
+  path: /opt/app/public/uploads
+#
+secrets:
+  - objectName: "secretName1"
+    paths:
+    - path: PUBLIC_URL
+      objectAlias: public_url
+#
+configmap:
+  SERVER_URL: http://moon-backend:1337
+#
+envFrom:
+- secretRef:
+  name: httpd
+- configMapRef:
+  name: httpd

@@ -1,0 +1,5 @@
+region      = "us-east-1"
+customer    = "CLARIN"
+environment = "DEVELOP"
+project     = "WALLET"
+sso_profile = "academy-box-1"

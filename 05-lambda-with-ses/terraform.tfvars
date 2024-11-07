@@ -1,0 +1,5 @@
+customer    = "devops"
+environment = "production"
+region      = "us-east-1"
+sso_profile = "academy-box-1"
+project = "WALLET"
